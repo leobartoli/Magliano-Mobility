@@ -1,62 +1,126 @@
-🌐 Progetto "Magliano Smart Mobility": Piattaforma Unificata di Tracciamento e Automazione (Smart Fleet)
-📍 Comune di Magliano in Toscana
-Questo repository implementa una piattaforma centralizzata per il monitoraggio e la gestione operativa di tutti i mezzi del Comune (flotta di servizio, e-bike per bike-sharing, ecc.), utilizzando esclusivamente software open source auto-ospitati (self-hosted).
-🎯 Obiettivi del Progetto Esteso
- * Gestione Unificata della Flotta Comunale (Veicoli + E-Bike): Avere un unico punto di controllo per la localizzazione, la manutenzione e l'utilizzo di tutti gli asset motorizzati.
- * Monitoraggio Bike-Sharing Cittadino (E-Bike): Automatizzare i processi operativi del servizio di noleggio/condivisione delle e-bike (check-in/out, tariffazione, stato di carica).
- * Ottimizzazione Servizi Pubblici: Migliorare l'efficienza dei percorsi dei mezzi di servizio e documentare i tempi di intervento (es. Protezione Civile).
- * Trasparenza e Analisi: Fornire dati per ottimizzare i costi, migliorare la sicurezza e supportare la pianificazione urbanistica.
-⚙️ Architettura Tecnologica (Open Source Stack)
-L'infrastruttura di base è invariata, ma il ruolo di Traccar e n8n viene espanso:
-| Componente | Ruolo | Tecnologia | Dati Trattati |
-|---|---|---|---|
-| Flotta E-Bike | Veicoli per Bike-Sharing. | Tracker GPS/GSM (Occultati) | Posizione, Velocità, Batteria Tracker. |
-| Flotta Servizi | Auto, Furgoni, Mezzi P.C. | Tracker OBD-II o cablati (Traccar-compatibili) | Posizione, Diagnostica Motore (su alcuni modelli). |
-| Traccar | Server di Tracking Open Source. Piattaforma unificata per tutti i dispositivi. | Docker (traccar/traccar) | Dati Geospaziali (Storico, Geofencing, Allarmi). |
-| n8n | Piattaforma di Automazione e Logica di Business. Gestisce: 1. Allerte Manutenzione, 2. Logica di Noleggio Bike-Sharing, 3. Reportistica. | Docker (n8nio/n8n) | Flussi di lavoro, Integrazione (Database, Email, Telegram). |
-| Database Esterno | (Nuovo) Database per l'archiviazione dei dati storici, dei log di noleggio e dell'anagrafica utenti. | PostgreSQL / MariaDB (opzionale a fianco di Traccar) | Log Noleggio, Utenti, Storico Viaggi. |
-🚀 Guida all'Installazione (Docker Compose Aggiornato)
-Il file docker-compose.yml è il cuore del sistema e rimane valido. Si raccomanda di aggiungere un Database dedicato per i dati del Bike-Sharing gestiti da n8n.
-1. File docker-compose.yml
-Il file precedentemente definito (postgres, traccar, n8n) è sufficiente, a patto che Traccar e n8n utilizzino lo stesso database o che n8n abbia accesso a un database per la sua logica di business.
-(Vedi la sezione precedente per la configurazione del docker-compose.yml)
-2. Configurazione Aggiuntiva Traccar
- * Aggiungere tutti i Veicoli: In Traccar, ogni mezzo comunale (e-bike, furgone A, auto B) deve essere aggiunto come nuovo dispositivo, utilizzando l'IMEI del rispettivo tracker.
- * Geofencing: Creare aree delimitate (Geofence) in Traccar per:
-   * Aree di Ritiro/Riconsegna E-Bike.
-   * Sede Comunale/Parcheggi Autorizzati.
-   * Limiti Amministrativi (per monitorare l'uso dei veicoli di servizio).
-💻 Flussi di Lavoro n8n per la Gestione (Workflow Essenziali)
-n8n utilizza le API REST di Traccar per accedere allo stato dei dispositivi e implementare la logica specifica per le due flotte (Servizio e Bike-Sharing).
-A. 🚖 Flusso: Monitoraggio Flotta Comunale di Servizio
-| Step | Ruolo | Logica | Dati Usati |
-|---|---|---|---|
-| Trigger | Webhook | Attivato da Traccar se si verifica un allarme (es. Geofence Out, Velocità Eccessiva). | traccar/api/notifications |
-| Filtro | If | Se (Tipo_Mezzo == Auto Servizio) E Velocità > 90 km/h. | Posizione, Velocità, Tipo Mezzo. |
-| Azione 1 | Telegram/Email | Invia notifica immediata al responsabile della flotta. | ID Veicolo, Tempo, Posizione (Link Mappa). |
-| Azione 2 | Database | Log dell'evento nel Database per la reportistica disciplinare o statistica. | Data/Ora, Violazione, Conducente (se noto). |
-B. 🚲 Flusso: Gestione Bike-Sharing (Check-in/Check-out)
-Questo flusso gestisce la tariffazione e lo stato di disponibilità delle E-Bike.
-| Step | Ruolo | Logica | Dati Usati |
-|---|---|---|---|
-| Trigger | Webhook (Traccar) | Attivato da Traccar quando un'E-Bike entra o esce da una Geofence (la stazione di noleggio). | traccar/api/notifications |
-| Check-out (Inizio Noleggio) | If | Se (Evento == Uscita da Geofence 'Stazione X') E Stato_Bici == Disponibile. | ID E-Bike, Tempo. |
-| Azione n8n | Database/API Esterna | Registra l'inizio del noleggio: Segna la bici come In Uso nel database/sistema di gestione utenti. Invia SMS/Email all'utente con l'ora di inizio. | Utente ID, Ora Inizio. |
-| Check-in (Fine Noleggio) | If | Se (Evento == Ingresso in Geofence 'Stazione X') E Stato_Bici == In Uso. | ID E-Bike, Tempo. |
-| Azione n8n | Function/Database | Calcola Tariffa e Termina Noleggio: Calcola la durata totale, applica la tariffa e invia il riepilogo del costo all'utente. Segna la bici come Disponibile e aggiorna lo storico. | Ora Fine, Durata, Costo. |
-C. 🔋 Flusso: Notifica Manutenzione (Carica E-Bike)
-| Step | Ruolo | Logica | Dati Usati |
-|---|---|---|---|
-| Trigger | Schedule Trigger | Esegue il controllo ogni ora. | N/A |
-| Controllo Stato | HTTP Request | Interroga Traccar per tutti i dispositivi E-Bike. | device_battery_level (batteria del tracker) |
-| Filtro | Filter/If | Filtra i risultati: Se (Tipo_Mezzo == E-Bike) E Batteria_Tracker < 20%. | ID E-Bike, Livello Batteria. |
-| Azione | Telegram/Email | Invia allarme al team di manutenzione: "E-Bike [ID] necessita di ricarica/manutenzione. Ultima posizione: [Link Mappa]". | ID E-Bike, Posizione. |
-📈 Vantaggi per il Comune di Magliano
- * Tracciamento Unico: Non è necessario formare il personale su piattaforme diverse (una per i mezzi, una per le e-bike). Traccar gestisce tutto.
- * Massima Personalizzazione: n8n permette al Comune di creare logiche di tariffazione, allertistica e reportistica personalizzate in base alle normative locali, senza vincoli di licenze software proprietarie.
- * Costi Contenuti: Si paga solo l'hosting del server (VPS) e i piani dati delle SIM card, eliminando costose licenze software per la gestione flotte.
- * Privacy: I dati di tracciamento dei cittadini (bike-sharing) restano sotto il controllo del Comune.
-Contatti:
- * Sviluppatore/Manutentore Tecnico: [Il tuo Nome/Ruolo]
- * Ufficio di Riferimento Comunale: [Ufficio Mobilità Sostenibile]
+# 🌐 Progetto **Magliano Smart Mobility**
+### Piattaforma Unificata di Tracciamento e Automazione *(Smart Fleet)*  
+📍 **Comune di Magliano in Toscana**
 
+Questo repository implementa una piattaforma centralizzata per il **monitoraggio e la gestione operativa** di tutti i mezzi del Comune  
+(flotta di servizio, e-bike per bike-sharing, ecc.), utilizzando **esclusivamente software open source auto-ospitati (self-hosted)**.
+
+---
+
+## 📖 Sommario
+- [🎯 Obiettivi del Progetto Esteso](#-obiettivi-del-progetto-esteso)
+- [⚙️ Architettura Tecnologica (Open Source Stack)](#️-architettura-tecnologica-open-source-stack)
+- [🚀 Guida all’Installazione (Docker Compose)](#-guida-allinstallazione-docker-compose)
+- [💻 Flussi di Lavoro n8n](#-flussi-di-lavoro-n8n)
+  - [🚖 Monitoraggio Flotta Comunale di Servizio](#-flusso-monitoraggio-flotta-comunale-di-servizio)
+  - [🚲 Gestione Bike-Sharing (Check-in / Check-out)](#-flusso-gestione-bike-sharing-check-in--check-out)
+  - [🔋 Notifica Manutenzione (Batteria E-Bike)](#-flusso-notifica-manutenzione-batteria-e-bike)
+- [📈 Vantaggi per il Comune di Magliano](#-vantaggi-per-il-comune-di-magliano)
+- [📬 Contatti](#-contatti)
+
+---
+
+## 🎯 Obiettivi del Progetto Esteso
+
+- **Gestione Unificata della Flotta Comunale (Veicoli + E-Bike)**  
+  Un unico punto di controllo per localizzazione, manutenzione e utilizzo di tutti gli asset motorizzati.
+
+- **Monitoraggio Bike-Sharing Cittadino (E-Bike)**  
+  Automatizzazione dei processi operativi di noleggio/condivisione (check-in/out, tariffazione, stato di carica).
+
+- **Ottimizzazione Servizi Pubblici**  
+  Miglioramento dell’efficienza dei percorsi dei mezzi di servizio e documentazione dei tempi di intervento (es. Protezione Civile).
+
+- **Trasparenza e Analisi**  
+  Fornitura di dati utili per ottimizzare i costi, migliorare la sicurezza e supportare la pianificazione urbanistica.
+
+---
+
+## ⚙️ Architettura Tecnologica (Open Source Stack)
+
+L'infrastruttura di base è invariata, ma il ruolo di **Traccar** e **n8n** viene esteso.
+
+| **Componente** | **Ruolo** | **Tecnologia** | **Dati Trattati** |
+|----------------|------------|----------------|-------------------|
+| **Flotta E-Bike** | Veicoli per Bike-Sharing | Tracker GPS/GSM (occultati) | Posizione, Velocità, Batteria Tracker |
+| **Flotta Servizi** | Auto, Furgoni, Mezzi P.C. | Tracker OBD-II o cablati (Traccar-compatibili) | Posizione, Diagnostica Motore |
+| **Traccar** | Server di tracking open source. Piattaforma unificata per tutti i dispositivi. | Docker (`traccar/traccar`) | Dati geospaziali (storico, geofencing, allarmi) |
+| **n8n** | Automazione e logica di business: allerta manutenzione, logica bike-sharing, reportistica | Docker (`n8nio/n8n`) | Flussi di lavoro, integrazioni (DB, email, Telegram) |
+| **Database Esterno** | Archivio storico, log noleggi, anagrafica utenti | PostgreSQL / MariaDB | Log noleggio, utenti, storico viaggi |
+
+---
+
+## 🚀 Guida all’Installazione (Docker Compose)
+
+Il file `docker-compose.yml` è il cuore del sistema e rimane valido.  
+Si raccomanda di aggiungere un **database dedicato** per i dati del bike-sharing gestiti da n8n.
+
+### 1. File `docker-compose.yml`
+Il file precedentemente definito (PostgreSQL, Traccar, n8n) è sufficiente,  
+a patto che Traccar e n8n utilizzino lo stesso database o che n8n abbia accesso a un database separato per la logica di business.  
+> 🔧 *Vedi la sezione precedente per la configurazione del `docker-compose.yml`.*
+
+### 2. Configurazione Aggiuntiva Traccar
+- **Aggiungere tutti i veicoli:** ogni mezzo (e-bike, furgone A, auto B) deve essere registrato come dispositivo, utilizzando l’IMEI del rispettivo tracker.  
+- **Geofencing:** creare aree delimitate per:  
+  - Aree di ritiro/riconsegna e-bike  
+  - Sede comunale / parcheggi autorizzati  
+  - Limiti amministrativi (monitoraggio uso mezzi di servizio)
+
+---
+
+## 💻 Flussi di Lavoro n8n
+
+n8n utilizza le **API REST di Traccar** per accedere allo stato dei dispositivi e implementare la logica specifica per le due flotte (servizio e bike-sharing).
+
+---
+
+### 🚖 Flusso: Monitoraggio Flotta Comunale di Servizio
+
+| **Step** | **Ruolo** | **Logica** | **Dati Usati** |
+|-----------|------------|-------------|----------------|
+| **Trigger** | Webhook | Attivato da Traccar (es. Geofence Out, velocità eccessiva) | `/traccar/api/notifications` |
+| **Filtro** | If | Se (Tipo_Mezzo == “Auto Servizio”) e Velocità > 90 km/h | Posizione, Velocità, Tipo Mezzo |
+| **Azione 1** | Telegram / Email | Invia notifica immediata al responsabile flotta | ID Veicolo, Tempo, Posizione |
+| **Azione 2** | Database | Registra l’evento per reportistica o analisi disciplinare | Data/Ora, Violazione, Conducente |
+
+---
+
+### 🚲 Flusso: Gestione Bike-Sharing (Check-in / Check-out)
+
+| **Step** | **Ruolo** | **Logica** | **Dati Usati** |
+|-----------|------------|-------------|----------------|
+| **Trigger** | Webhook (Traccar) | Attivato all’ingresso/uscita da Geofence (stazione di noleggio) | `/traccar/api/notifications` |
+| **Check-out (Inizio)** | If | Se Evento = Uscita da Geofence “Stazione X” e bici è disponibile | ID E-Bike, Tempo |
+| **Azione n8n** | Database / API | Registra inizio noleggio, invia SMS/Email all’utente | Utente ID, Ora Inizio |
+| **Check-in (Fine)** | If | Se Evento = Ingresso in Geofence “Stazione X” e bici è in uso | ID E-Bike, Tempo |
+| **Azione n8n** | Function / Database | Calcola durata, tariffa, invia riepilogo e aggiorna disponibilità | Ora Fine, Durata, Costo |
+
+---
+
+### 🔋 Flusso: Notifica Manutenzione (Batteria E-Bike)
+
+| **Step** | **Ruolo** | **Logica** | **Dati Usati** |
+|-----------|------------|-------------|----------------|
+| **Trigger** | Schedule Trigger | Controllo ogni ora | N/A |
+| **Controllo Stato** | HTTP Request | Interroga Traccar per stato E-Bike | `device_battery_level` |
+| **Filtro** | If | Se (Tipo_Mezzo == E-Bike) e Batteria < 20% | ID E-Bike, Livello Batteria |
+| **Azione** | Telegram / Email | Invia allarme al team manutenzione con link mappa | ID E-Bike, Posizione |
+
+---
+
+## 📈 Vantaggi per il Comune di Magliano
+
+- **Tracciamento Unico** → Nessuna necessità di usare piattaforme diverse: Traccar gestisce tutto.  
+- **Massima Personalizzazione** → n8n permette logiche di tariffazione, allertistica e reportistica su misura.  
+- **Costi Contenuti** → Si paga solo l’hosting e i piani dati delle SIM.  
+- **Privacy Garantita** → I dati restano completamente sotto il controllo del Comune.
+
+---
+
+## 📬 Contatti
+
+- **Sviluppatore / Manutentore Tecnico:** [Il tuo Nome / Ruolo]  
+- **Ufficio di Riferimento Comunale:** *Ufficio Mobilità Sostenibile*  
+
+---
