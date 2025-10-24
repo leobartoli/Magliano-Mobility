@@ -1,72 +1,74 @@
-# 🌐 Magliano Smart Mobility – Gestione Flotta Comunale e Pagamenti PagoPA
+# 🚗 Magliano Smart Mobility  
+### Gestione Open Source della Flotta Comunale e Pagamenti PagoPA
 
 ## 📍 Comune di Magliano in Toscana
-Sistema integrato per la **gestione, tracciamento e tariffazione automatica** della flotta comunale:
-- 🚗 Mezzi di servizio (auto, furgoni, Protezione Civile)
-- 🚲 E-Bike per il servizio di bike-sharing cittadino
-- 💳 Pagamenti digitali tramite **PagoPA**, in linea con le Linee Guida AgID
+Sistema **open source**, **self-hosted** e **conforme a PagoPA**, per la gestione e il monitoraggio della flotta comunale:
+- 🚗 Mezzi di servizio (auto, furgoni, veicoli tecnici)  
+- 🚲 E-bike per bike sharing comunale  
+- 💳 Pagamenti automatici tramite **PagoPA**
 
-L’intero sistema è **open source**, **self-hosted** e accessibile solo sulla rete comunale.
-
----
-
-## 🎯 Obiettivi Principali
-- **Gestione unificata** della flotta comunale (veicoli e e-bike)
-- **Monitoraggio in tempo reale** dei mezzi (posizione, velocità, stato)
-- **Automazione completa** delle notifiche, allarmi e manutenzioni
-- **Pagamenti digitali** automatici per i noleggi tramite PagoPA
-- **Trasparenza e tracciabilità** per tutti i servizi di mobilità comunale
+Il sistema è progettato per funzionare **in rete locale (intranet)**, con dati gestiti interamente dal Comune.
 
 ---
 
-## ⚙️ Architettura Open Source
+## 🎯 Obiettivi
+- Gestione unificata di tutti i mezzi comunali
+- Monitoraggio in tempo reale (GPS, stato, manutenzioni)
+- Automazione dei flussi operativi con **n8n**
+- Pagamenti digitali via **PagoPA**
+- Sicurezza e tracciabilità dei dati
+- Compatibilità con **Active Directory / Keycloak**
+
+---
+
+## ⚙️ Architettura
 
 | Componente | Funzione | Tecnologia |
 |-------------|-----------|------------|
-| **Traccar** | Server di tracking per mezzi e e-bike | Docker `traccar/traccar` |
-| **n8n** | Automazione flussi (noleggi, manutenzioni, pagamenti) | Docker `n8nio/n8n` |
-| **PagoPA Proxy** | Gateway open source verso PagoPA | Docker `pagopa-proxy` |
-| **PostgreSQL** | Database unico per noleggi, utenti, pagamenti | Docker `postgres:16` |
-| **Adminer** | Pannello di amministrazione database | Docker `adminer` |
+| **Traccar** | Rilevamento posizione GPS e stato veicoli | Docker `traccar/traccar` |
+| **n8n** | Orchestrazione flussi (noleggi, allarmi, pagamenti) | Docker `n8nio/n8n` |
+| **PagoPA Proxy** | Integrazione open source con PagoPA | Docker `pagopa-proxy` |
+| **PostgreSQL** | Database unico per mezzi, utenti, pagamenti | Docker `postgres:16` |
+| **Adminer** | Gestione grafica database | Docker `adminer` |
 
 ---
 
-## 🧭 Funzionamento Semplificato
+## 🧭 Funzionamento
 
 ### 🚗 Mezzi Comunali
-1. Ogni veicolo è dotato di tracker GPS/OBD-II compatibile con Traccar.  
-2. Traccar raccoglie posizione, velocità, diagnostica motore.  
-3. n8n riceve avvisi automatici (es. velocità eccessiva, uscita geofence).  
-4. Gli alert vengono inviati via Telegram/Email al responsabile.  
-5. Tutti gli eventi sono salvati nel database per la reportistica.
+1. Ogni mezzo ha un dispositivo GPS compatibile con Traccar.  
+2. Traccar invia dati di posizione, velocità e diagnostica.  
+3. n8n riceve notifiche di eventi (geofence, manutenzione, anomalie).  
+4. Le notifiche arrivano via Telegram o Email al responsabile.  
+5. Tutti i log vengono archiviati nel database PostgreSQL.
 
-### 🚲 E-Bike per Bike-Sharing
-1. Le e-bike sono equipaggiate con tracker GPS/GSM.  
-2. Traccar segnala automaticamente **uscite/ingressi** dalle aree di parcheggio (geofence).  
-3. n8n interpreta gli eventi come **inizio o fine noleggio**.  
-4. Al termine del noleggio viene calcolata la tariffa e generato un **IUV PagoPA**.  
-5. L’utente riceve via Telegram o email il link per pagare con PagoPA.  
-6. Una volta effettuato il pagamento, n8n aggiorna il database e chiude la sessione.
+### 🚲 E-Bike Comunali
+1. Le e-bike inviano automaticamente posizione e stato batteria.  
+2. Quando un’area di parcheggio viene lasciata, n8n registra **inizio noleggio**.  
+3. Al rientro in area, viene registrata la **fine noleggio**.  
+4. n8n calcola la tariffa in base alla durata e genera un **IUV PagoPA**.  
+5. L’utente riceve via Telegram/Email il link di pagamento PagoPA.  
+6. Dopo il pagamento, il sistema aggiorna lo stato a **PAGATO** e archivia la ricevuta.
 
 ---
 
-## 💳 Pagamento PagoPA Integrato
+## 💳 Integrazione PagoPA
 
-### Flusso di Pagamento
+### Flusso Automatico
 | Step | Azione |
 |------|---------|
-| 1️⃣ | Traccar → n8n segnala “Fine noleggio” |
-| 2️⃣ | n8n calcola durata e costo |
-| 3️⃣ | Generazione **IUV** (Identificativo Univoco di Versamento) |
-| 4️⃣ | Invio dati al gateway `pagopa-proxy` |
-| 5️⃣ | L’utente riceve link PagoPA (via Telegram o Email) |
-| 6️⃣ | Dopo il pagamento, stato aggiornato a `PAGATO` e ricevuta archiviata |
+| 1️⃣ | Fine noleggio segnalata da Traccar |
+| 2️⃣ | n8n calcola importo e genera **IUV** |
+| 3️⃣ | Invio al gateway `pagopa-proxy` |
+| 4️⃣ | Creazione posizione debitoria PagoPA |
+| 5️⃣ | Invio link all’utente (Telegram o Email) |
+| 6️⃣ | Verifica pagamento e archiviazione ricevuta |
 
-### Esempio di tabella `pagamenti`
+### Esempio struttura tabella `pagamenti`
 ```sql
 CREATE TABLE pagamenti (
   id SERIAL PRIMARY KEY,
-  user_id INT,
+  utente_id INT,
   mezzo_id INT,
   iuv VARCHAR(40) UNIQUE,
   importo NUMERIC(10,2),
