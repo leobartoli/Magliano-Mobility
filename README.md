@@ -1,4 +1,3 @@
-
 # 🚗 Magliano Smart Mobility
 
 > **Sistema comunale open source per la gestione intelligente della mobilità pubblica e condivisa**  
@@ -26,24 +25,25 @@
 
 ## 🎯 Obiettivo del progetto
 
-**Magliano Smart Mobility** è un progetto di innovazione locale che digitalizza la gestione della **flotta comunale** e del **bike sharing cittadino**, integrando tracciamento GPS, pagamenti PagoPA e automazione dei processi con un **agente IA** basato su **n8n**.
+**Magliano Smart Mobility** è un progetto di innovazione locale che digitalizza la gestione della **flotta comunale** e del **bike sharing cittadino**, integrando tracciamento GPS, pagamenti PagoPA e **automazione intelligente** tramite **agente IA** basato su **n8n**.
 
 L’obiettivo è:
-- migliorare l’efficienza amministrativa e ridurre i tempi operativi,  
-- abbattere costi di gestione e sprechi,  
-- promuovere una mobilità sostenibile e trasparente,  
-- offrire ai cittadini un servizio accessibile e moderno.
+- migliorare efficienza e trasparenza amministrativa,  
+- ridurre costi e impatti ambientali,  
+- semplificare i servizi di mobilità pubblica,  
+- favorire una gestione autonoma e sicura dei dati.
 
 ---
 
 ## ⚙️ Struttura del sistema
 
-Il sistema è composto da due parti principali:
+Il sistema unisce **dispositivi fisici** e **software intelligente**:
 
-1. **Hardware fisico**: dispositivi GPS, QR code, sensori e punti di ricarica.  
-2. **Software gestionale con agente IA**: piattaforma locale in Docker, con automazione n8n e analisi in tempo reale.
+1. **Hardware comunale**: GPS, QR code, e-bike e sensori.  
+2. **Software locale Docker**: gestione, automazione, e reportistica.  
+3. **Agente IA n8n**: supporta gli operatori e automatizza decisioni operative.
 
-Tutti i dati restano **intranet**, sotto il pieno controllo del Comune.
+Tutto opera **all’interno dell’intranet comunale**, senza dipendenza da servizi esterni.
 
 ---
 
@@ -53,27 +53,26 @@ Tutti i dati restano **intranet**, sotto il pieno controllo del Comune.
 
 | Componente | Descrizione | Funzione |
 |-------------|-------------|----------|
-| **Tracker GPS (Concox GT06N)** | Installato sui veicoli comunali | Tracciamento automatico in tempo reale |
-| **SIM IoT dati** | Connettività 4G minima | Invio dei dati GPS al server comunale |
-| **Alimentazione 12V** | Collegamento diretto all’auto | Funzionamento continuo |
-| **QR interno** | Etichetta con scheda veicolo | Accesso rapido via smartphone |
+| **Tracker GPS (Concox GT06N)** | Installato su ciascun veicolo comunale | Tracciamento e storico spostamenti |
+| **SIM IoT dati** | Connettività 4G | Invio dati al server |
+| **QR code interno** | Adesivo nel veicolo | Accesso a dati, scadenze e schede manutenzione |
 
 ### 🚲 Bike sharing comunale
 
 | Componente | Descrizione | Funzione |
 |-------------|-------------|----------|
-| **E-bike con tracker GPS** | Bicicletta elettrica comunale | Tracciamento e sicurezza |
-| **QR code** | Codice adesivo sul manubrio | Prenotazione e pagamento via smartphone |
-| **Lucchetto elettronico** | Controllato via software | Sblocco solo dopo pagamento PagoPA |
+| **E-bike con GPS** | Bicicletta elettrica comunale | Tracciamento percorsi e soste |
+| **QR code** | Sul telaio | Prenotazione e pagamento via smartphone |
+| **Lucchetto elettronico** | Blocco controllato da software | Sblocco solo dopo pagamento verificato |
 
 ### 🏢 Infrastruttura comunale
 
 | Componente | Descrizione | Funzione |
 |-------------|-------------|----------|
-| **Server Linux / Docker** | Mini PC o server del Comune | Ospita il sistema Smart Mobility |
-| **Rete LAN / Intranet** | Connessione interna | Sicurezza e affidabilità |
-| **UPS** | Gruppo di continuità | Protezione elettrica |
-| **Modulo PagoPA** | Gateway ufficiale o simulato | Pagamenti sicuri e tracciabili |
+| **Server Linux / Docker** | Server locale o Mini PC | Esecuzione dell’intero sistema |
+| **LAN / Intranet** | Connessione interna | Sicurezza e continuità |
+| **UPS** | Gruppo di continuità | Protezione alimentazione |
+| **Modulo PagoPA** | Gateway o simulazione | Gestione pagamenti pubblici |
 
 ---
 
@@ -81,90 +80,105 @@ Tutti i dati restano **intranet**, sotto il pieno controllo del Comune.
 
 | Software | Ruolo | Benefici |
 |-----------|--------|-----------|
-| 🛰️ **Traccar** | Server GPS open source | Riceve e memorizza i dati dei veicoli |
-| ⚙️ **n8n + Agente IA** | Automazione e assistenza intelligente | Analizza dati, risponde, propone azioni |
-| 🗄️ **PostgreSQL / PostGIS** | Database geografico | Archivia percorsi e zone |
-| 📊 **Grafana** | Dashboard pubbliche e interne | Statistiche, percorsi, emissioni |
-| 🔒 **Keycloak** | Gestione identità e accessi | Integrazione AD comunale |
-| 💳 **PagoPA Proxy** | Gateway o mock | Gestione automatica dei pagamenti |
-| 🐳 **Docker Compose** | Contenitore unificato | Facilità di gestione e backup |
+| 🛰️ **Traccar** | Gestione GPS | Ricezione dati veicoli e bici |
+| ⚙️ **n8n + Agente IA** | Automazione e IA | Controllo flussi, tariffe e pagamenti |
+| 🗄️ **PostgreSQL / PostGIS** | Database geografico | Archivia percorsi e coordinate |
+| 📊 **Grafana** | Dashboard | Visualizzazione trasparente dati |
+| 🔒 **Keycloak** | Autenticazione | Accesso sicuro integrato AD |
+| 💳 **PagoPA Proxy** | Gateway | Pagamenti digitali tracciati |
+| 🐳 **Docker Compose** | Contenitore unico | Gestione e manutenzione semplificata |
 
 ---
 
 ## 🤖 Gestione tramite Agente IA (n8n)
 
-Il sistema include un **agente intelligente** integrato in **n8n**, che supporta il personale comunale nelle attività quotidiane di mobilità e manutenzione.
+L’agente IA rappresenta il **cuore intelligente del sistema**.  
+Basato su **n8n**, analizza in tempo reale i dati provenienti da Traccar, PostgreSQL e PagoPA per **automatizzare** attività tecniche e amministrative.
 
-### 🧠 Compiti dell’agente IA
+### 🧠 Compiti principali
 
 | Funzione | Descrizione |
 |-----------|-------------|
-| **Analisi predittiva** | Prevede scadenze di manutenzione, consumo carburante e anomalie nei percorsi |
-| **Assistenza decisionale** | Suggerisce la redistribuzione delle e-bike in base ai dati di utilizzo |
-| **Elaborazione automatica dati GPS** | Traduce i log di Traccar in report leggibili e pronti per il dirigente |
-| **Dialogo con gli operatori** | Interazione via Telegram o pannello n8n per richieste tipo: “Mostra chilometri percorsi oggi dalla Panda AB123CD” |
-| **Gestione manutenzioni** | Genera automaticamente segnalazioni o prenotazioni officina |
-| **Interfaccia naturale** | Il personale può scrivere comandi in linguaggio naturale, l’agente esegue le azioni |
+| **Analisi predittiva** | Anticipa scadenze manutenzioni e usura dei veicoli |
+| **Ottimizzazione percorsi** | Suggerisce l’uso più efficiente dei mezzi e delle e-bike |
+| **Gestione tariffe** | Calcola automaticamente il costo del servizio in base a tempo, distanza o fascia oraria |
+| **Creazione IUV PagoPA** | Genera e assegna un codice IUV per ogni noleggio o servizio |
+| **Verifica pagamenti** | Controlla lo stato dei pagamenti PagoPA e aggiorna la disponibilità dei mezzi |
+| **Rendicontazione automatica** | Produce report contabili giornalieri e mensili per il responsabile del servizio |
+| **Dialogo con gli operatori** | Risponde via Telegram o pannello web alle richieste del personale |
+| **Alert automatici** | Segnala anomalie, guasti, scadenze o superamenti soglie di costo |
 
 ### 🗣️ Esempi d’uso
 
-- “Quanti chilometri ha percorso la Punto del cantiere stradale questa settimana?”  
-- “Mostrami le e-bike più usate nel mese di agosto.”  
-- “Segnala un alert se un mezzo resta acceso oltre 2 ore consecutive.”  
-- “Genera il report settimanale dei movimenti della flotta e invialo alla PEC mobilità.”
+- “Calcola quanto ha incassato il bike sharing nel weekend.”  
+- “Genera gli IUV per le prenotazioni di oggi e inviali via email.”  
+- “Blocca la bici 03 se non risulta il pagamento entro 5 minuti.”  
+- “Mostra i veicoli con manutenzione scaduta.”  
+- “Prepara la rendicontazione per il bilancio settimanale.”
+
+### 💰 Gestione tariffe e pagamenti
+
+L’agente IA gestisce in autonomia il **ciclo completo di tariffazione**:
+
+1. **Definizione tariffe comunali**: impostate tramite pannello n8n o database (es. €0,50 ogni 15 minuti).  
+2. **Calcolo dinamico**: l’agente applica la tariffa in base alla durata effettiva, al tipo di veicolo e alla fascia oraria.  
+3. **Generazione IUV PagoPA**: ad ogni prenotazione, crea un codice IUV e la richiesta di pagamento.  
+4. **Verifica automatica**: monitora lo stato del pagamento e attiva il servizio solo dopo la conferma.  
+5. **Rendicontazione**: al termine, registra incasso, mezzo usato e durata nel database contabile.  
+
+Tutto il processo avviene **senza intervento manuale**, riducendo il carico sugli uffici e garantendo **trasparenza totale**.
 
 ### 🔧 Benefici dell’Agente IA
 
 | Area | Vantaggio |
 |------|------------|
-| **Efficienza operativa** | Riduzione drastica delle attività manuali di inserimento dati |
-| **Decisioni basate su dati reali** | Suggerimenti e alert proattivi |
-| **Formazione ridotta** | Interfaccia in linguaggio naturale, accessibile anche a personale non tecnico |
-| **Ottimizzazione risorse** | Gestione automatica di flotte, turni e manutenzioni |
-| **Semplificazione amministrativa** | Report e analisi pronti per la trasmissione agli uffici competenti |
+| **Efficienza operativa** | Automatizza calcoli, verifiche e report |
+| **Accuratezza contabile** | Elimina errori nei conteggi e nei pagamenti |
+| **Decisioni basate sui dati** | Analisi in tempo reale di costi e utilizzo |
+| **Riduzione tempi di lavoro** | Fino al -70% del tempo amministrativo |
+| **Comunicazione naturale** | Interazione vocale o testuale via Telegram |
+| **Scalabilità** | Aggiunta di nuovi mezzi o tariffe senza modifiche strutturali |
 
 ---
 
 ## 🔄 Funzionamento operativo
 
 ### 🚗 Flotta comunale
-
-1. L’autista accende il veicolo → il GPS invia i dati a Traccar.  
-2. L’agente IA in n8n elabora automaticamente tragitti, soste e consumi.  
-3. Se viene superata una soglia (es. 10.000 km), viene generato un alert manutenzione.  
-4. Grafana e il dirigente possono visualizzare tutto in tempo reale.  
+1. Il veicolo si accende → Traccar invia i dati.  
+2. L’agente IA elabora tragitti e tempi di utilizzo.  
+3. Se superate soglie chilometriche → avviso manutenzione.  
+4. Grafana aggiorna dashboard e storico giornaliero.
 
 ### 🚲 Bike sharing comunale
-
-1. Il cittadino inquadra il QR code e prenota una bici.  
-2. L’agente IA verifica disponibilità, genera un **IUV PagoPA**, e sblocca la bici dopo il pagamento.  
-3. Durante il noleggio, il sistema registra posizione, durata e costo.  
-4. Alla restituzione, tutto viene archiviato automaticamente.  
+1. Il cittadino scansiona il QR code.  
+2. L’agente IA calcola la tariffa e genera un IUV PagoPA.  
+3. Dopo il pagamento, la bici si sblocca.  
+4. Al termine del noleggio, l’agente aggiorna i dati contabili e statistici.
 
 ---
 
 ## 🏛️ Benefici per la Pubblica Amministrazione
 
-| Area | Beneficio concreto |
-|------|--------------------|
-| **Efficienza** | Dati e automazioni riducono fino al 50% il tempo di gestione della flotta. |
-| **Riduzione costi** | -15% carburante e manutenzioni; nessun canone software. |
-| **Digitalizzazione** | Tutti i flussi (prenotazioni, pagamenti, manutenzioni) sono digitali. |
-| **Trasparenza** | Dati accessibili in tempo reale, anche ai cittadini. |
-| **Pianificazione intelligente** | L’agente IA fornisce analisi predittive su utilizzo e consumi. |
-| **Autonomia** | Sistema locale, open source e autosufficiente. |
+| Area | Beneficio |
+|------|------------|
+| **Gestione automatica** | Tutti i flussi (pagamenti, manutenzioni, tariffe) sono digitali |
+| **Riduzione costi** | Meno ore di gestione e zero canoni software |
+| **Trasparenza totale** | Tutti i dati e gli incassi visibili in tempo reale |
+| **Contabilità semplificata** | Rendicontazione automatica integrata |
+| **Scalabilità** | Sistema estendibile ad altri servizi comunali (parcheggi, bus, ecc.) |
+| **Indipendenza** | Tutto open source e gestito internamente |
 
 ---
 
 ## 👥 Benefici per i cittadini
 
 | Aspetto | Vantaggio |
-|----------|------------|
-| **Accesso semplice** | Prenotazione e pagamento in un solo passaggio, via QR. |
-| **Pagamenti sicuri** | Gestione integrata con PagoPA. |
-| **Comunicazione diretta** | Ricezione di notifiche, promozioni e aggiornamenti via Telegram. |
-| **Servizi efficienti** | Nessuna attesa: sistema automatico e sempre disponibile. |
-| **Partecipazione civica** | I dati aperti incentivano trasparenza e fiducia nella PA. |
+|----------|-----------|
+| **Accesso rapido** | Prenotazione e pagamento in pochi secondi |
+| **Pagamenti sicuri** | Sistema PagoPA certificato |
+| **Servizio trasparente** | Tariffe chiare e calcolate automaticamente |
+| **Affidabilità** | Noleggi tracciati e monitorati |
+| **Innovazione** | Esperienza moderna e digitale per tutti |
 
 ---
 
@@ -172,33 +186,34 @@ Il sistema include un **agente intelligente** integrato in **n8n**, che supporta
 
 | Ambito | Beneficio |
 |--------|------------|
-| **Emissioni CO₂** | -2,5 tonnellate/anno grazie a mobilità elettrica e ottimizzazione viaggi |
-| **Consumi** | -15% carburante e chilometri a vuoto |
-| **Turismo sostenibile** | Incremento delle presenze grazie alle e-bike comunali |
-| **Immagine pubblica** | Comune innovativo, efficiente e “verde” |
-| **Partecipazione** | Coinvolgimento della comunità e delle scuole in progetti Smart City |
+| **Emissioni CO₂** | -2,5 tonnellate/anno grazie all’uso di e-bike e ottimizzazione spostamenti |
+| **Consumo carburante** | -15% grazie alla pianificazione intelligente |
+| **Turismo sostenibile** | Accesso semplice a mezzi ecologici per visitatori |
+| **Immagine pubblica** | Comune efficiente, innovativo e “green” |
+| **Coinvolgimento** | Incentivo alla cittadinanza attiva e alla mobilità dolce |
 
 ---
 
 ## 🔐 Sicurezza e gestione
 
-- Tutti i dati **restano nella rete comunale (intranet)**  
-- **Accesso controllato** tramite Keycloak e Active Directory  
-- **Backup giornalieri automatici** su server comunale  
-- **Nessun cloud esterno** o servizio commerciale  
-- **Conformità GDPR** e tracciabilità completa dei dati  
+- Tutti i dati **restano all’interno dell’intranet comunale**  
+- Accesso tramite **Keycloak e Active Directory locale**  
+- **Backup automatici** e versionamento container Docker  
+- **Conformità GDPR** e tracciabilità completa di ogni operazione  
 
 ---
 
 ## 🚀 Sintesi finale
 
-**Magliano Smart Mobility** rappresenta un modello replicabile di innovazione per i piccoli comuni italiani:
+**Magliano Smart Mobility** è una piattaforma comunale open source, autonoma e intelligente che unisce:
+- Mobilità sostenibile  
+- Digitalizzazione amministrativa  
+- Intelligenza artificiale operativa  
+- Pagamenti pubblici tracciati  
 
-✅ Gestione automatica e intelligente della mobilità pubblica  
-✅ Integrazione completa con PagoPA e sistemi comunali  
-✅ Decisioni guidate dai dati e dall’agente IA  
-✅ Risparmio economico e ambientale concreto  
-✅ Trasparenza e qualità del servizio ai cittadini  
+✅ **Riduce costi, tempi e burocrazia**  
+✅ **Aumenta trasparenza e fiducia**  
+✅ **Promuove sostenibilità e innovazione**  
 
 ---
 
@@ -212,8 +227,8 @@ Rilasciato sotto licenza **MIT**
 ## 🙏 Crediti
 
 ### Software Open Source
-- [Traccar](https://www.traccar.org/)
 - [n8n](https://n8n.io/)
+- [Traccar](https://www.traccar.org/)
 - [PostgreSQL / PostGIS](https://www.postgresql.org/)
 - [Grafana](https://grafana.com/)
 - [Docker](https://www.docker.com/)
@@ -230,4 +245,4 @@ Rilasciato sotto licenza **MIT**
 ---
 
 > 🏛️ *“Un piccolo Comune, una grande visione: mobilità intelligente, sostenibile e condivisa.”*  
-> — **Comune di Magliano in Toscana — Settore Tecnico
+> — **Comune di Magliano in Toscana — Ufficio Innovazione e Mobilità
