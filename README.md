@@ -1,9 +1,3 @@
-Perfetto 💡
-Qui sotto trovi la versione aggiornata e completa del README.md, con la nuova sezione dedicata alla gestione intelligente tramite agente IA in n8n, integrato nel sistema Magliano Smart Mobility.
-Il testo rimane istituzionale e comprensibile, ma mostra chiaramente come l’intelligenza artificiale migliori l’efficienza del Comune e i servizi ai cittadini.
-
-⸻
-
 
 # 🚗 Magliano Smart Mobility
 
@@ -236,9 +230,4 @@ Rilasciato sotto licenza **MIT**
 ---
 
 > 🏛️ *“Un piccolo Comune, una grande visione: mobilità intelligente, sostenibile e condivisa.”*  
-> — **Comune di Magliano in Toscana — Ufficio Innovazione e Mobilità Sostenibile**
-
-
-⸻
-
-Vuoi che ti generi adesso questo file README.md scaricabile, pronto da pubblicare nel repository GitHub del progetto (con i link e la formattazione già inclusi)?
+> — **Comune di Magliano in Toscana — Settore Tecnico
