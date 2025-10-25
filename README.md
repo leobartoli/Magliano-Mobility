@@ -1,196 +1,217 @@
-# 🚗 Magliano Smart Mobility  
-> **Sistema comunale open source per la gestione intelligente della mobilità pubblica e condivisa**  
-> Un progetto del **Comune di Magliano in Toscana** per una Pubblica Amministrazione più efficiente, sostenibile e digitale.  
+Perfetto ✅
+Ecco la versione definitiva del README.md riscritta in stile GitHub repository, con struttura professionale, linguaggio chiaro e formattazione Markdown ottimizzata per visualizzazione su GitHub.
+Include emoji per leggibilità, ma mantiene tono istituzionale e tecnico, perfetto per repository pubblico o interno del Comune di Magliano in Toscana.
+
+⸻
+
+
+# 🚗 Magliano Smart Mobility
+
+> **Sistema open source per la gestione intelligente della mobilità pubblica e condivisa.**  
+> Un progetto del **Comune di Magliano in Toscana** per una Pubblica Amministrazione più efficiente, sostenibile e digitale.
 
 ---
 
-## 📋 Indice
-- [Obiettivo del progetto](#🎯-obiettivo-del-progetto)
-- [Struttura del sistema](#⚙️-struttura-del-sistema)
-- [Componenti Hardware](#🔩-componenti-hardware)
-- [Componenti Software](#💻-componenti-software)
-- [Gestione tramite Agente IA (n8n)](#🤖-gestione-tramite-agente-ia-n8n)
-- [MODULO A: Bike Sharing Gratuito e Anonimo](#🚲-modulo-a-bike-sharing-gratuito-e-anonimo)
-- [MODULO B: Gestione Flotta Comunale](#🚗-modulo-b-gestione-flotta-comunale)
-- [Benefici per la Pubblica Amministrazione](#🏛️-benefici-per-la-pubblica-amministrazione)
-- [Benefici per i cittadini](#👥-benefici-per-i-cittadini)
-- [Sicurezza e gestione](#🔐-sicurezza-e-gestione)
-- [Sintesi finale](#🚀-sintesi-finale)
-- [Licenza](#📄-licenza)
-- [Crediti](#🙏-crediti)
+## 📘 Panoramica
+
+**Magliano Smart Mobility** è una piattaforma comunale open source per la **mobilità sostenibile e la gestione flotta**.  
+Unisce il **Bike Sharing gratuito e anonimo** e la **manutenzione predittiva della flotta comunale**, sfruttando GPS, geofencing e automazione intelligente tramite **n8n**.
+
+### 🎯 Obiettivi
+- 🚲 Offrire un servizio di **Bike Sharing a frizione zero**, gratuito e anonimo.  
+- 🚐 Digitalizzare la **gestione della flotta comunale**.  
+- 🌍 Ridurre costi e impatti ambientali.  
+- 🤖 Automatizzare attività operative con un **Agente IA locale**.  
 
 ---
 
-## 🎯 Obiettivo del progetto
+## ⚙️ Architettura del sistema
 
-**Magliano Smart Mobility** è un progetto di innovazione locale che digitalizza la gestione della flotta comunale e del **bike sharing cittadino gratuito**, integrando **tracciamento GPS** e **automazione intelligente** tramite agente IA basato su **n8n**.
+Il sistema è **modulare**, completamente **autonomo** e basato su tecnologie **open source**.  
+Opera interamente **all’interno dell’infrastruttura comunale**, senza dipendenze da servizi cloud.
 
-### Obiettivi principali
-- 🚲 Fornire un servizio di **Bike Sharing a frizione zero**: gratuito, anonimo e gestito unicamente da GPS/Geofencing.  
-- 🚐 Migliorare l'efficienza amministrativa e la **manutenzione predittiva** della Flotta Comunale.  
-- 🌍 Ridurre costi e impatti ambientali, favorendo una gestione **autonoma, sicura e sostenibile** dei dati.
-
----
-
-## ⚙️ Struttura del sistema
-
-Il sistema è **modulare**, unendo dispositivi fisici (tracker GPS) e software intelligente su un’unica infrastruttura.
-
-- 🛰️ **Hardware comunale:** tracker GPS su veicoli e e-bike.  
-- 🧩 **Software locale Docker:** gestione, automazione e logica.  
-- 🤖 **Agente IA n8n:** automatizza decisioni operative e flussi logici.  
-
-> Tutto opera **all’interno dell’intranet comunale**, senza dipendenza da servizi esterni.
+### Componenti principali
+- 🛰️ **Tracker GPS** su veicoli e biciclette.  
+- ⚙️ **Software Docker** per gestione e automazione.  
+- 🤖 **Agente IA n8n** per la logica operativa.  
+- 🗄️ **PostgreSQL/PostGIS** come database geografico.  
+- 📊 **Grafana** per dashboard e trasparenza pubblica.  
 
 ---
 
-## 🔩 Componenti Hardware
+## 🔩 Hardware consigliato
 
 | Componente | Descrizione | Funzione |
 |-------------|-------------|----------|
-| **Tracker GPS** | Installato su ciascun veicolo e su ciascuna e-bike. | Tracciamento in tempo reale e storico spostamenti. |
-| **SIM IoT dati** | Connettività 4G. | Invio dati al server Traccar. |
-| **QR Code (e-bike)** | Sul telaio. | Link al Bot Telegram per richiesta disponibilità o alla mappa pubblica. |
-| **Server Linux / Docker** | Server locale o Mini PC. | Esecuzione dell’intero sistema. |
-| **UPS** | Gruppo di continuità. | Protezione dell’alimentazione elettrica. |
+| **Tracker GPS** | Installato su veicoli e biciclette. | Tracciamento in tempo reale. |
+| **SIM IoT (4G)** | Scheda dati con APN privato. | Trasmissione dati GPS. |
+| **QR Code (e-bike)** | Sul telaio. | Link rapido al bot Telegram o alla mappa pubblica. |
+| **UPS** | Gruppo di continuità. | Protezione alimentazione. |
 
 ---
 
-## 💻 Componenti Software
+## 💻 Software stack
 
 | Software | Ruolo | Benefici |
 |-----------|--------|----------|
-| 🛰️ **Traccar** | Gestione GPS | Ricezione dati veicoli, definizione Geofence e invio Webhook. |
-| ⚙️ **n8n + Agente IA** | Automazione e logica | Controllo flussi, gestione allarmi, interfaccia Telegram. |
-| 🗄️ **PostgreSQL / PostGIS** | Database geografico | Archivia percorsi, stato bici e log di servizio (senza dati utente). |
-| 📊 **Grafana** | Dashboard | Visualizzazione trasparente dei dati di utilizzo per la PA. |
-| 🔒 **Keycloak** | Autenticazione | Accesso sicuro integrato con Active Directory locale. |
-| 🐳 **Docker Compose** | Contenitore unico | Gestione e manutenzione semplificata. |
+| 🛰️ **Traccar** | Gestione GPS | Ricezione dati, Geofencing e Webhook verso n8n. |
+| ⚙️ **n8n + Agente IA** | Automazione e logica | Controllo flussi, gestione allarmi e bot Telegram. |
+| 🗄️ **PostgreSQL / PostGIS** | Database | Archivia percorsi, stati e log. |
+| 📊 **Grafana** | Dashboard | Visualizzazione e analisi dati. |
+| 🐳 **Docker Compose** | Containerizzazione | Gestione e manutenzione semplificata. |
 
 ---
 
-## 🤖 Gestione tramite Agente IA (n8n)
+## 🤖 Agente IA (n8n)
 
-L’agente IA è il **cuore logico** del sistema.  
-Analizza in tempo reale i dati provenienti da Traccar per automatizzare attività e supportare gli operatori comunali.
+L’**Agente IA** è il cuore logico del sistema:  
+riceve eventi GPS da Traccar, li elabora in tempo reale e coordina tutte le automazioni operative (bike sharing e flotta).
 
-### 🧠 Compiti principali
+### Compiti principali
 
 | Funzione | Applicazione | Descrizione |
 |-----------|--------------|-------------|
-| **Logica di corsa (GPS)** | Bike Sharing | Avvia e termina la corsa in base a Geofence e Movimento/Sosta. |
-| **Allarme perimetro (furto)** | Bike Sharing | Invia un’allerta immediata (Email/Telegram) se la bici esce dai confini comunali. |
-| **Timeout e abbandono** | Bike Sharing | Rilascio forzato dello stato DISPONIBILE dopo inattività (es. 6 ore). |
-| **Analisi predittiva** | Flotta Comunale | Anticipa scadenze di manutenzione e usura dei veicoli. |
-| **Dialogo con operatori** | Entrambi | Risponde via Telegram o pannello web alle richieste del personale. |
-| **Alert automatici** | Entrambi | Segnala anomalie, guasti e scadenze. |
-
-### 🗣️ Esempi d’uso (Operatori PA)
-- “Mostra le bici con batteria tracker bassa o manutenzione scaduta.”  
-- “Qual è l'ultima posizione della Bici 103? È fuori dal Geofence del Comune?”  
-- “Prepara il report sull'utilizzo della Flotta Comunale nell'ultima settimana.”
+| **Logica di corsa (GPS)** | Bike Sharing | Avvio/terminazione corsa basati su movimento e geofence. |
+| **Allarme perimetro (furto)** | Bike Sharing | Notifica immediata via Telegram o email. |
+| **Timeout e abbandono** | Bike Sharing | Rilascio automatico stato *DISPONIBILE* dopo inattività. |
+| **Analisi predittiva** | Flotta Comunale | Previsione manutenzioni e anomalie. |
+| **Dialogo operativo** | Entrambi | Interazione con operatori via Telegram. |
+| **Alert automatici** | Entrambi | Segnalazioni di guasti e scadenze. |
 
 ---
 
-## 🚲 MODULO A: Bike Sharing Gratuito e Anonimo
+## 🧩 Prompt dell’Agente IA
 
-Il sistema è progettato per la **massima semplicità e accesso universale** dei cittadini.
+L’agente è programmato con un prompt che definisce la logica decisionale e i limiti operativi.
 
-| Caratteristica | Dettaglio |
-|----------------|-----------|
-| **Modalità d’uso** | Pick-up and Go: la bici è sempre sbloccata. |
-| **Identificazione** | Anonima: nessuna registrazione, app o documento richiesto. |
-| **Logica del servizio** | Basata unicamente su Traccar Geofencing e n8n. |
-| **Servizio utente** | Richiesta disponibilità tramite Bot Telegram `/biciposto`. |
+```text
+🎯 Prompt Agente IA - Magliano Smart Mobility
 
-### 🔄 Flusso Logico (n8n)
+Tu sei l’agente operativo del Comune di Magliano in Toscana.
+Gestisci due ambiti:
+  - Bike Sharing gratuito e anonimo
+  - Flotta comunale con manutenzione predittiva
 
-| Fase | Logica n8n | Servizio Utente |
-|------|-------------|----------------|
-| **Disponibilità** | Bici con stato *DISPONIBILE* e dentro un Geofence di rilascio. | Utente riceve la lista (es. “Bici 101: Piazza del Municipio”). |
-| **Inizio corsa** | `geofenceExit` + `deviceMoving` rilevati da Traccar. | La corsa è registrata nel database logistico. |
-| **Allarme furto** | `geofenceExit` dal perimetro comunale. | Allerta immediata al Comando di Polizia. |
+Regole operative:
+1. Non utilizzare dati personali, solo ID veicoli/bici.
+2. Tutte le informazioni provengono da Traccar e PostgreSQL/PostGIS.
+3. Le azioni avvengono tramite flussi n8n.
+4. Se ricevi “geofenceExit” o “deviceMoving”, aggiorna lo stato.
+5. Se una bici esce dai confini comunali, invia allerta a Polizia Locale.
+6. Genera report solo su richiesta esplicita.
+7. Risposte brevi, tecniche e chiare per gli operatori comunali.
+
+Esempi di comandi Telegram
+	•	Mostra bici inattive da oltre 6 ore
+	•	Report utilizzo flotta settimanale
+	•	Allerta bici fuori geofence
+
+⸻
+
+🚲 Modulo A — Bike Sharing Gratuito e Anonimo
+
+Un servizio pubblico senza app né registrazione, basato su GPS e automazione locale.
+
+Caratteristica	Dettaglio
+Modalità d’uso	Pick-up & Go: bici sempre sbloccate.
+Identificazione	Nessun dato personale, solo ID bici.
+Logica del servizio	Geofence e movimento gestiti da n8n.
+Richiesta disponibilità	Bot Telegram /biciposto.
+
+Flusso operativo
+
+Fase	Evento	Azione
+Disponibilità	Bici nel Geofence di rilascio.	Mostrata come “disponibile” nel bot.
+Inizio corsa	geofenceExit + deviceMoving.	Avvio automatico della corsa.
+Allarme furto	geofenceExit dal confine comunale.	Notifica immediata alla Polizia Locale.
+
+
+⸻
+
+🚐 Modulo B — Gestione Flotta Comunale
+
+Gestione integrata e predittiva dei mezzi comunali.
+
+Funzionalità	Descrizione
+Tracciamento completo	Storico spostamenti e consumi.
+Manutenzione predittiva	Allerta automatica su km/ore d’uso.
+Ottimizzazione percorsi	Analisi utilizzo mezzi.
+Alert operativi	Notifiche automatiche su guasti o anomalie.
+
+
+⸻
+
+👥 Benefici per i cittadini
+
+Aspetto	Vantaggio
+Accesso immediato	Nessuna app, nessuna registrazione.
+Anonimato garantito	Nessun dato personale registrato.
+Trasparenza	Dati di disponibilità consultabili pubblicamente.
+Sostenibilità	Servizio gratuito, a zero emissioni e manutenzione automatizzata.
+
+
+⸻
+
+🏛️ Benefici per la Pubblica Amministrazione
+
+Area	Beneficio
+Automazione logistica	Tutti i flussi digitalizzati e monitorati.
+Riduzione costi	Nessun canone, software 100% open source.
+Sicurezza asset	Controllo automatico tramite Geofencing.
+Autonomia tecnologica	Sistema gestito localmente, senza cloud.
+
+
+⸻
+
+🔐 Sicurezza e gestione
+	•	Tutti i dati restano all’interno dell’infrastruttura comunale.
+	•	Il sistema non elabora dati personali (anonimato garantito).
+	•	Backup e versionamento automatici via Docker.
+	•	Accesso tecnico riservato al personale interno.
+
+⸻
+
+🚀 Sintesi finale
+
+Magliano Smart Mobility è una piattaforma pubblica open source, autonoma e intelligente che integra:
+	•	🚲 Bike Sharing gratuito e anonimo
+	•	🚐 Gestione e manutenzione flotta comunale
+	•	🤖 Automazione e IA locale tramite n8n
+
+✅ Riduce costi, tempi e burocrazia
+✅ Aumenta trasparenza e fiducia
+✅ Promuove sostenibilità e innovazione
+
+⸻
+
+📄 Licenza
+
+Rilasciato sotto licenza MIT License
+© 2025 Comune di Magliano in Toscana
+
+⸻
+
+🙏 Crediti
+
+Software Open Source
+	•	n8n
+	•	Traccar
+	•	PostgreSQL / PostGIS
+	•	Grafana
+	•	Docker
+
+Hardware consigliato
+	•	Concox GT06N (GPS Tracker)
+
+⸻
+
+🏛️ “Un piccolo Comune, una grande visione: mobilità intelligente, sostenibile e condivisa.”
+Comune di Magliano in Toscana — Ufficio Innovazione e Mobilità
+
+⸻
+
 
 ---
 
-## 🚗 MODULO B: Gestione Flotta Comunale
-
-Supporta il personale nel **monitoraggio, analisi e manutenzione predittiva** dei mezzi di proprietà comunale.
-
-| Funzionalità | Vantaggio |
-|---------------|-----------|
-| **Tracciamento completo** | Storico di tutti gli spostamenti ufficiali. |
-| **Manutenzione predittiva** | Allerta automatica basata su km percorsi o ore di utilizzo. |
-| **Ottimizzazione flotta** | Analisi dei percorsi più frequenti e utilizzo dei mezzi. |
-| **Accesso sicuro** | Dashboard protetta da Keycloak (solo personale PA). |
-
----
-
-## 👥 Benefici per i cittadini
-
-| Aspetto | Vantaggio |
-|----------|-----------|
-| **Accesso rapido** | Nessuna app da scaricare, nessuna registrazione. |
-| **Trasparenza** | Dati di posizione e disponibilità pubblici. |
-| **Affidabilità** | Il Bot Telegram mostra solo bici correttamente rilasciate. |
-| **Innovazione** | Servizio moderno, digitale e completamente gratuito. |
-
----
-
-## 🏛️ Benefici per la Pubblica Amministrazione
-
-| Area | Beneficio |
-|-------|------------|
-| **Gestione automatica** | Tutti i flussi logici digitalizzati e tracciati. |
-| **Riduzione costi** | Nessun canone software, gestione autonoma. |
-| **Sicurezza del patrimonio** | Allarmi geofencing per proteggere i mezzi. |
-| **Indipendenza tecnologica** | Tutto open source e gestito internamente. |
-
----
-
-## 🔐 Sicurezza e gestione
-
-- Tutti i dati restano **all’interno dell’intranet comunale**.  
-- **Anonimato totale** per gli utenti del Bike Sharing.  
-- Accesso amministrativo gestito tramite **Keycloak + Active Directory locale**.  
-- **Backup automatici** e versionamento container Docker.  
-
----
-
-## 🚀 Sintesi finale
-
-**Magliano Smart Mobility** è una piattaforma comunale **open source**, **autonoma** e **intelligente** che unisce:
-
-- 🚲 Mobilità sostenibile (Bike Sharing gratuito e anonimo)  
-- 🚐 Digitalizzazione amministrativa (Gestione Flotta PA)  
-- 🤖 Intelligenza artificiale operativa (Logica di n8n)  
-
-✅ Riduce costi, tempi e burocrazia  
-✅ Aumenta trasparenza e fiducia  
-✅ Promuove sostenibilità e innovazione  
-
----
-
-## 📄 Licenza
-Rilasciato sotto licenza **MIT License**  
-© 2025 **Comune di Magliano in Toscana**
-
----
-
-## 🙏 Crediti
-
-### Software Open Source
-- n8n  
-- Traccar  
-- PostgreSQL / PostGIS  
-- Grafana  
-- Docker  
-- Keycloak  
-
-### Hardware consigliato
-- Concox GT06N  
-
----
-
-> 🏛️ *“Un piccolo Comune, una grande visione: mobilità intelligente, sostenibile e condivisa.”*  
-> **Comune di Magliano in Toscana — Ufficio Innovazione e Mobilità**
+Vuoi che ti prepari anche il file `docker-compose.yml` corrispondente a questa versione (con Traccar, n8n, PostgreSQL/PostGIS e Grafana già configurati per funzionare insieme)?  
+Posso includere anche il workflow base n8n (`smart_mobility_agent.json`) con il prompt integrato.
