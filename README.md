@@ -1,10 +1,3 @@
-Perfetto ✅
-Ecco la versione definitiva del README.md riscritta in stile GitHub repository, con struttura professionale, linguaggio chiaro e formattazione Markdown ottimizzata per visualizzazione su GitHub.
-Include emoji per leggibilità, ma mantiene tono istituzionale e tecnico, perfetto per repository pubblico o interno del Comune di Magliano in Toscana.
-
-⸻
-
-
 # 🚗 Magliano Smart Mobility
 
 > **Sistema open source per la gestione intelligente della mobilità pubblica e condivisa.**  
@@ -207,11 +200,3 @@ Hardware consigliato
 
 🏛️ “Un piccolo Comune, una grande visione: mobilità intelligente, sostenibile e condivisa.”
 Comune di Magliano in Toscana — Ufficio Innovazione e Mobilità
-
-⸻
-
-
----
-
-Vuoi che ti prepari anche il file `docker-compose.yml` corrispondente a questa versione (con Traccar, n8n, PostgreSQL/PostGIS e Grafana già configurati per funzionare insieme)?  
-Posso includere anche il workflow base n8n (`smart_mobility_agent.json`) con il prompt integrato.
